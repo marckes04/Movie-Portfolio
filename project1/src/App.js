@@ -1,8 +1,14 @@
+import { useState } from "react";
 import { Creator } from "./components/Creator";
 import { Lists } from "./components/Lists";
 import { Searcher } from "./components/Searcher";
 
+
+
 function App() {
+
+    const[listadoState, setListadoState] = useState([]);
+
   return (
      <div className="layout">
       
@@ -27,7 +33,7 @@ function App() {
        
         <section id="content" className="content">
 
-         <Lists />
+         <Lists listadoState={listadoState} setListadoState={setListadoState}/>
 
         </section>
 
@@ -35,7 +41,7 @@ function App() {
         <aside classNameName="lateral">
           
             <Searcher />
-            <Creator />
+            <Creator setListadoState={setListadoState} />
         </aside>
 
        

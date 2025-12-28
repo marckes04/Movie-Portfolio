@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
+import{GuardarEnStorage} from "../Helpers/GuardarEnStorage";
 
-export const Creator = () => {
+export const Creator = ({setListadoState}) => {
 
     const title = "Añadir pelicula";
     const [peliState, setPeliState] = useState({
@@ -25,9 +26,19 @@ export const Creator = () => {
         };
 
             setPeliState(peli);
-     }
 
-  return (
+        //actualizar estado del listado principal
+        setListadoState( elementos => {
+            return [...elementos, peli];
+        });
+
+            GuardarEnStorage("peli", peli);
+
+
+    }
+
+
+return (
     <div>
         <div className="add">
                 <h3 className="title">{title}</h3>
