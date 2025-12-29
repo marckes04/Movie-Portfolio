@@ -1,60 +1,87 @@
-import React, { useState } from 'react'
-import{GuardarEnStorage} from "../Helpers/GuardarEnStorage";
+import React, { useState } from 'react';
+import { GuardarEnStorage } from '../Helpers/GuardarEnStorage';
 
-export const Creator = ({setListadoState}) => {
+export const Creator = ({ setListadoState }) => {
 
-    const title = "Añadir pelicula";
+    const tituloComponente = "Añadir película";
+
+    // Estado local para el formulario
     const [peliState, setPeliState] = useState({
-        titulo : '',
-        descripcion : ''
-    })
+        titulo: '',
+        descripcion: ''
+    });
 
-    const conseguirDatosForm = e => { 
+    const conseguirDatosForm = e => {
         e.preventDefault();
-//conseguir datos del formulario
+
+        // 1. Obtener datos del formulario
         let target = e.target;
         let titulo = target.titulo.value;
         let descripcion = target.descripcion.value;
 
-        alert("El titulo es: " + titulo + " y la descripción es: " + descripcion);
-
-        //crear objeto de la pelicula a guardar
+        // 2. Crear el objeto de la película
         let peli = {
-            id : new Date().getTime(),
-            titulo: titulo,
-            descripcion: descripcion
+            id: new Date().getTime(),
+            titulo,
+            descripcion
         };
 
-            setPeliState(peli);
+        // 3. Guardar en el estado local del componente
+        setPeliState(peli);
 
-        //actualizar estado del listado principal
-        setListadoState( elementos => {
+        // 4. ACTUALIZAR EL ESTADO PRINCIPAL (Aquí es donde se conectan Lists y Searcher)
+        // Usamos una función dentro de setListadoState para asegurar que tenemos
+        // el listado más reciente y no lo perdemos.
+        setListadoState(elementos => {
+            // Si por algún error 'elementos' no es un array, creamos uno nuevo
+            if (!Array.isArray(elementos)) {
+                return [peli];
+            }
+            // Retornamos el array anterior MÁS la película nueva
             return [...elementos, peli];
         });
 
-            GuardarEnStorage("peli", peli);
+        // 5. Guardar en el LocalStorage usando tu Helper
+        // IMPORTANTE: Asegúrate de usar siempre "pelis" en plural
+        GuardarEnStorage("pelis", peli);
 
-
+        // 6. (Opcional) Limpiar el formulario después de guardar
+        target.reset();
     }
 
-
-return (
-    <div>
+    return (
         <div className="add">
-                <h3 className="title">{title}</h3>
-                <form onSubmit={conseguirDatosForm}>
-                    <input  type="text" 
-                            id="titulo" 
-                            name="titulo"
-                            placeholder="Titulo" />
+            <h3 className="title">{tituloComponente}</h3>
 
-                    <textarea 
-                        id="descripcion" 
-                        name="descripcion"
-                        placeholder="Descripción"></textarea>
-                    <input type="submit" id="save" value="Guardar" />
-                </form>
-            </div>
-    </div>
-  )
+            {/* Mostrar el título de la película recién creada solo para confirmar */}
+            {(peliState.titulo && peliState.descripcion) && (
+                <div className="peli_creada">
+                    <strong>Has creado la película: {peliState.titulo}</strong>
+                </div>
+            )}
+
+            <form onSubmit={conseguirDatosForm}>
+                <input 
+                    type="text" 
+                    id="titulo" 
+                    name="titulo" 
+                    placeholder="Título" 
+                    required 
+                />
+
+                <textarea 
+                    id="descripcion" 
+                    name="descripcion" 
+                    placeholder="Descripción" 
+                    required
+                ></textarea>
+
+                <input 
+                    type="submit" 
+                    id="save" 
+                    value="Guardar" 
+                />
+            </form>
+        </div>
+    );
 }
