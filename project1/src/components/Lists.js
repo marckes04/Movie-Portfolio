@@ -1,57 +1,47 @@
-import React, {useEffect,useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import { Editar } from './Editar';
 
-export const Lists = ({listadoState, setListadoState}) => {
+export const Lists = ({ listadoState, setListadoState }) => {
 
-//const[listadoState, setListadoState] = useState([]);
+    const [editar, setEditar] = useState(0);
 
-const[editar, setEditar] = useState(0);
+    useEffect(() => {
+        // Carga inicial
+        let pelis = JSON.parse(localStorage.getItem("pelis")) || [];
+        setListadoState(pelis);
+    }, [setListadoState]);
 
-useEffect(() => {
-  conseguirPeliculas();
-}, []);
+    const borraPeli = (id) => {
+        let nuevo_array = listadoState.filter(peli => peli.id !== parseInt(id));
+        setListadoState(nuevo_array);
+        localStorage.setItem("pelis", JSON.stringify(nuevo_array));
+    }
 
-const conseguirPeliculas = () => {
- let peliculas = JSON.parse(localStorage.getItem("pelis")) || [];
-  
-  setListadoState(peliculas);
-}
+    return (
+        <>
+            {listadoState.length > 0 ? (
+                listadoState.map(peli => (
+                    <article key={peli.id} className="peli-item">
+                        <h3 className="title">{peli.titulo}</h3>
+                        <p className="description">{peli.descripcion}</p>
 
-const borraPeli = (id) => {
-    // 1. Filtrar el estado actual para quitar la película con ese ID
-    let nuevo_array_peliculas = listadoState.filter(peli => peli.id !== parseInt(id));
+                        <button className="edit" onClick={() => setEditar(peli.id)}>Editar</button>
+                        <button className="delete" onClick={() => borraPeli(peli.id)}>Borrar</button>
 
-    // 2. Actualizar el estado para que la UI se refresque
-    setListadoState(nuevo_array_peliculas);
-
-    // 3. Actualizar el localStorage para que el borrado sea permanente
-    localStorage.setItem("pelis", JSON.stringify(nuevo_array_peliculas));
-}
-
-
-  return (
-    <>
-    { listadoState.length > 0 ? (
-    listadoState.map(peli => {
-        return (
-            <article key={peli.id} className="peli-item">
-                <h3 className="title">{peli.titulo}</h3>
-                <p className="description">{peli.descripcion}</p>
-                <button className="edit" onClick={() => setEditar(peli.id)}>Editar</button>
-                <button className="delete" onClick={() => borraPeli(peli.id)}>Borrar</button>
-
-                {/*Aparece formulario de editar*/}
-                {editar === peli.id && (
-                    <Editar/>
-                )}
-            </article>
-        );
-    })
-) : (
-    <h2>No hay películas para mostrar</h2>
-)}
-
+                        {/* Si el ID coincide, mostramos el formulario de edición */}
+                        {editar === peli.id && (
+                            <Editar 
+                                peli={peli} 
+                                listadoState={listadoState} 
+                                setListadoState={setListadoState} 
+                                setEditar={setEditar} 
+                            />
+                        )}
+                    </article>
+                ))
+            ) : (
+                <h2>No hay películas para mostrar</h2>
+            )}
         </>
-
-  )
+    )
 }
