@@ -8,7 +8,22 @@ function App() {
   const [listadoState, setListadoState] = useState([]);
 
   return (
+
+  
     <div className="layout">
+      <header className="header">
+        <div className="logo"></div>
+        <h1 id="Title-Portfolio">Movie Marckes Portfolio</h1>
+      </header>
+      <nav className="nav">
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Movies</a></li>
+          <li><a href="#">TV Shows</a></li>
+          <li><a href="#">My List</a></li>
+        </ul>
+      </nav>
+
       <section id="content" className="content">
         <Lists listadoState={listadoState} setListadoState={setListadoState} />
       </section>
